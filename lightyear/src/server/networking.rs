@@ -179,14 +179,14 @@ pub(crate) fn receive_packets(
             // packets from a client
             // TODO: use connection to apply on BOTH message manager and replication manager
             if let Some(connection) = connection_manager.connections.get_mut(&client_id) {
-                connection
-                    .recv_packet(
-                        payload,
-                        tick_manager.as_ref(),
-                        component_registry.as_ref(),
-                        &mut connection_manager.delta_manager,
-                    )
-                    .expect("could not receive packet");
+                if let Err(err) = connection.recv_packet(
+                    payload,
+                    tick_manager.as_ref(),
+                    component_registry.as_ref(),
+                    &mut connection_manager.delta_manager,
+                ) {
+                    warn!("Could not receive packet: {err:?}");
+                }
             } else {
                 // it's still possible to receive some packets from a client that just disconnected.
                 // (multiple packets arrived at the same time from that client)
