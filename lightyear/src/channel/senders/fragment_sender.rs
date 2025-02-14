@@ -32,9 +32,6 @@ impl FragmentSender {
         }
         let chunks = fragment_bytes.chunks(self.fragment_size);
         let num_fragments = chunks.len();
-        if num_fragments > u8::MAX as usize {
-            return Err(SerializationError::MessageTooBig(fragment_bytes.len()));
-        }
         Ok(chunks
             .enumerate()
             // TODO: ideally we don't clone here but we take ownership of the output of writer
